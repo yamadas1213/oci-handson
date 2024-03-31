@@ -1,0 +1,50 @@
+#cloud-config
+write_files:
+  - path: /home/opc/.oci/config
+    owner: opc:root
+    permissions: "0600"
+    content: |
+      [DEFAULT]
+      tenancy=${tenancyid}
+      region=${region}
+runcmd:
+  - echo Start Docker Install...
+  - sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  - sudo dnf install -y docker-ce docker-ce-cli containerd.io
+  - sudo gpasswd -a opc docker
+  - sudo systemctl restart docker
+  - sudo chgrp docker /var/run/docker.sock
+  - sudo chmod 666 /var/run/docker.sock
+  - docker version
+  - echo Finished Docker Install!
+  - echo Start Docker Compose Install...
+  - sudo curl -SL https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
+  - sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+  - docker-compose version
+  - echo Finished Docker Compose Install!
+  - echo Start kubectl Install...
+  - sudo curl -LO "https://dl.k8s.io/release/$(curl -LS https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  - sudo chmod +x ./kubectl
+  - sudo mv ./kubectl /usr/local/bin/kubectl
+  - kubectl version --client --output=yaml
+  - echo Finished kubectl Install!
+  - echo Start Fn Install...
+  - curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
+  - docker image pull fnproject/fnserver
+  - docker image ls
+  - echo Finished Fn Install!
+  - echo Start OCI CLI Install...
+  - sudo dnf -y install oraclelinux-developer-release-el8
+  - sudo dnf -y install python36-oci-cli
+  - echo Finished oci-cli Install!
+  # change the permissions and ownership
+  - sudo chown -R opc /home/opc/.oci
+  - sudo ls -l /home/opc/.oci/config
+  - echo Modify Auth
+  - sudo chmod 600 /home/opc/.oci/config
+  - sudo ls -l /home/opc/.oci/config
+  # Output logs
+  - sudo cp /var/log/cloud-init-output.log /home/opc
+  - echo End of Installed!!
+  - echo Please run command export OCI_CLI_AUTH=instance_principal
