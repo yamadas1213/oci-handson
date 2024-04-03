@@ -5,9 +5,6 @@ source = "./modules/vcn"
 region = var.region
 tenancy_ocid = var.tenancy_ocid
 compartment_id = var.compartment_id
-user_ocid = var.user_ocid
-private_key_path = var.private_key_path
-fingerprint = var.private_key_path
 }
 
 module "compute"{
@@ -21,7 +18,4 @@ subnet_id = module.vcn.subnet_id
 region = var.region
 tenancy_ocid = var.tenancy_ocid
 compartment_id = var.compartment_id
-user_ocid = var.user_ocid
-private_key_path = var.private_key_path
-fingerprint = var.private_key_path
 }
