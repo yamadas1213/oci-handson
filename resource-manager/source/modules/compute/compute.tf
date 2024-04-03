@@ -8,11 +8,11 @@ data "template_file" "cloudinit" {
 
 resource "oci_core_instance" "generated_oci_core_instance" {
     #Instance Name
-    display_name = "yamadas-instance"
+    display_name = "handson-instance"
 
     #(Required) 配置
     compartment_id = var.compartment_id
-    availability_domain = "TGjA:UK-LONDON-1-AD-1"
+    availability_domain = "TGjA:AP-TOKYO-1-AD-1"
     #Optional
     fault_domain = "FAULT-DOMAIN-1"
 
@@ -25,7 +25,7 @@ resource "oci_core_instance" "generated_oci_core_instance" {
     #Image
     source_details {
         #Oracle-Linux-8.8-2023.12.13-0
-		source_id = "ocid1.image.oc1.uk-london-1.aaaaaaaa4ijmnmoupcixncuuwlx7oqalzgbmrlyzdewn22fibel42lefgeqa"
+		source_id = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaa4etzu57mque5ma3zcrhisizuhzyp7e43zlzmar35wt3f4mymyjoq"
 		source_type = "image"
 	}
     #Primary VNIC
@@ -49,7 +49,7 @@ resource "oci_core_instance" "generated_oci_core_instance" {
     }
 
     metadata = {
-        ssh_authorized_keys = file("${path.module}/.ssh/yamadas-ssh-key.pub")
+        ssh_authorized_keys = file("${path.module}/.ssh/id_rsa.pub")
 		#Cloudinitを指定する
 		user_data = base64encode("${data.template_file.cloudinit.rendered}")
     }
